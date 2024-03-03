@@ -2,4 +2,5 @@ import { App } from "./app";
 
 const app = new App();
 
-app.listen()
+app.listenSocket();
+app.listen();
