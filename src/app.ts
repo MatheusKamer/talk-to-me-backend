@@ -32,10 +32,13 @@ class App{
       console.log('Usuario inserido na sala: ' + data.roomId)
       socket.join(data.roomId)
 
-      socket.broadcast.to(data.roomId).emit('chat', {
-        message: data.message,
-        username: data.username,
-        time: data.time,
+      socket.on('chat', (data) => {
+        console.log(`Usuário ${data.username}: ${data.message}`);
+        socket.broadcast.to(data.roomId).emit('chat', {
+          message: data.message,
+          username: data.username,
+          time: data.time,
+        })
       })
     })
   }
