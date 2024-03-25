@@ -31,14 +31,31 @@ class App{
     socket.on('subscribe', (data) => {
       console.log('Usuario inserido na sala: ' + data.roomId)
       socket.join(data.roomId)
+      socket.join(data.socketId)
 
-      socket.on('chat', (data) => {
-        console.log(`Usuário ${data.username}: ${data.message}`);
-        socket.broadcast.to(data.roomId).emit('chat', {
-          message: data.message,
+      const roomsSession = Array.from(socket.rooms)
+
+      if (roomsSession.length > 0) {
+        socket.to(data.roomId).emit('new user', {
+          socketId: socket.id,
           username: data.username,
-          time: data.time,
         })
+      }
+    });
+
+    socket.on('newUserStart', (data) => {
+      console.log('Novo usuário chegou', data)
+      socket.to(data.to).emit('newUserStart', {
+        sender: data.sender,
+      })
+    })
+
+    socket.on('chat', (data) => {
+      console.log(`Usuário ${data.username}: ${data.message}`);
+      socket.broadcast.to(data.roomId).emit('chat', {
+        message: data.message,
+        username: data.username,
+        time: data.time,
       })
     })
   }
